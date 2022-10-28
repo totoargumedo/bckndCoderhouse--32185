@@ -1,4 +1,4 @@
-import ContenedorArchivo from "./container/container.js";
+import ContainerFile from "./container/container.js";
 import express from "express";
 
 // declaracion de server
@@ -7,7 +7,7 @@ const app = express();
 const PORT = 8080;
 
 // Instanciar contenedor de productos
-const productos = new ContenedorArchivo("productos");
+const productos = new ContainerFile("productos");
 
 // Endpoints
 app.get("/productos", (req, res) => {
