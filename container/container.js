@@ -7,6 +7,7 @@ class ContainerFile {
 
   constructor(fileName) {
     this.#fileName = `./data/${fileName}.txt`;
+    this.read();
   }
 
   async read() {
@@ -52,9 +53,9 @@ class ContainerFile {
     let newElement = { ...element, id: this.#id };
     this.#content.push(newElement);
     await this.write(this.#content);
-    console.log({
+    return {
       message: `Elemento ${newElement.title} guardado correctamente`,
-    });
+    };
   }
 
   getById(id) {
@@ -68,10 +69,17 @@ class ContainerFile {
 
   getAll() {
     if (this.#content.length == 0) {
-      console.log({ error: "No existen elementos guardados" });
+      return { message: "No existen elementos guardados" };
     } else {
-      console.log(this.#content);
       return this.#content;
+    }
+  }
+
+  getRandom() {
+    if (this.#content.length == 0) {
+      return { message: "No existen elementos guardados" };
+    } else {
+      return this.#content[Math.floor(Math.random() * this.#content.length)];
     }
   }
 
