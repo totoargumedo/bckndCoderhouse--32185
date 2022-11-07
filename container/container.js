@@ -1,12 +1,12 @@
 import fs from "fs";
+import crypto from "crypto";
 
 class ContainerFile {
-  #id = 0;
   #content = [];
   #fileName;
 
   constructor(fileName) {
-    this.#fileName = `./data/${fileName}.txt`;
+    this.#fileName = `./file/${fileName}.txt`;
     this.read();
   }
 
@@ -14,9 +14,6 @@ class ContainerFile {
     try {
       const data = await fs.promises.readFile(this.#fileName, "utf-8");
       this.#content = JSON.parse(data);
-      if (this.#content.length > 0) {
-        this.#id = Math.max(...this.#content.map((e) => e.id));
-      }
       console.log({
         message: `El archivo ${this.#fileName} se cargo correctamente`,
       });
@@ -27,10 +24,6 @@ class ContainerFile {
         description: `Error al cargar ${this.#fileName}`,
         message: `Se creo ${this.#fileName}`,
       });
-      // console.log({         |opcional si no se quiere crear al no existir|
-      //   error: error,
-      //   description: `Error al cargar ${this.#fileName}`,
-      // });
     }
   }
 
@@ -49,21 +42,32 @@ class ContainerFile {
   }
 
   async save(element) {
-    this.#id++;
-    let newElement = { ...element, id: this.#id };
+    const newElement = { ...element, id: crypto.randomUUID() };
     this.#content.push(newElement);
     await this.write(this.#content);
-    return {
-      message: `Elemento ${newElement.title} guardado correctamente`,
-    };
+    return newElement;
   }
 
   getById(id) {
-    let elementFind = this.#content.find((element) => element.id == id);
+    const elementFind = this.#content.find((element) => element.id == id);
     if (!elementFind) {
-      return { error: "Elemento no encontrado" };
+      return { error: `Elemento ${id} no encontrado` };
     } else {
-      return { message: "Elemento encontrado", element: elementFind };
+      return elementFind;
+    }
+  }
+
+  async modifyById(id, element) {
+    console.log(id + " " + element);
+    let index = this.#content.indexOf(
+      this.#content.find((element) => element.id == id)
+    );
+    if (index == -1) {
+      return { error: `Error: elemento ${id} no encontrado` };
+    } else {
+      this.#content[index] = element;
+      await this.write(this.#content);
+      return this.#content[index];
     }
   }
 
@@ -88,17 +92,18 @@ class ContainerFile {
       this.#content.find((element) => element.id == id)
     );
     if (index == -1) {
-      console.log({ error: `Error: elemento con id: ${id} no encontrado` });
+      return { error: `Error: elemento ${id} no encontrado` };
     } else {
+      const elementToDel = this.#content[index];
       this.#content.splice(index, 1);
       await this.write(this.#content);
-      console.log({ message: `Elemento eliminado correctamente` });
+      return elementToDel;
     }
   }
 
   async deleteAll() {
     await this.write("[]");
-    console.log("Todos los productos fueron borrados correctamente");
+    return { message: "Todos los elementos fueron borrados correctamente" };
   }
 }
 

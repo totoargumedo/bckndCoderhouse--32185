@@ -1,25 +1,25 @@
-import ContainerFile from "./container/container.js";
 import express from "express";
+import { routerProductos } from "./routers/products.js";
 
 // declaracion de server
 const app = express();
-
 const PORT = 8080;
 
-// Instanciar contenedor de productos
-const productos = new ContainerFile("productos");
+// MIDDLEWARES
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// static
+app.use(express.static("public"));
+
+// Routers
+app.use("/api/productos", routerProductos);
 
 // Endpoints
-app.get("/productos", (req, res) => {
-  const getElements = productos.getAll();
+// app.get("/", (req, res) => {
+//   res.send("HOLO");
+// });
 
-  res.status(200).json(getElements);
-});
-
-app.get("/productoRandom", (req, res) => {
-  const getRandomElement = productos.getRandom();
-  res.status(200).json(getRandomElement);
-});
 // Inicializacion de server
 const server = app.listen(PORT, () => {
   console.log(`Server running in port ${server.address().port}`);
