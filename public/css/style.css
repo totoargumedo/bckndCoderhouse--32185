@@ -1,0 +1,15 @@
+.lost{
+    background: url('../assets/lost.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: space-between;
+    font-family: monospace;
+    color: blueviolet;
+    font-variant: small-caps;
+}
