@@ -67,7 +67,7 @@ buttonForm.addEventListener("click", (e) => {
         ${data.title}
         agregado correctamente
       </div>`;
-      new bootstrap.Toast(document.getElementById("liveToast")).show();
+      // new bootstrap.Toast(document.getElementById("liveToast")).show();
       let newProduct = document.createElement("tr");
       newProduct.innerHTML = `
           <th scope="row">${data.id}</th>

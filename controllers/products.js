@@ -4,12 +4,17 @@ const productos = new ContainerFile("productos");
 
 async function getProduct({ params }, res) {
   let findElement;
+  let multipleElements;
   if (params.id) {
     findElement = await productos.getById(params.id);
+    multipleElements = false;
   } else {
     findElement = await productos.getAll();
+    multipleElements = true;
   }
-  res.status(200).json(findElement);
+  res
+    .status(200)
+    .render("products", { elements: findElement, multiple: multipleElements });
 }
 
 async function getProductRandom(req, res) {
