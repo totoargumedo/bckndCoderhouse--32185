@@ -1,7 +1,7 @@
 import fs from "fs";
 import crypto from "crypto";
 
-class ContainerFile {
+class ContainerChat {
   #content;
   #fileName;
 
@@ -108,4 +108,4 @@ class ContainerFile {
   }
 }
 
-export default ContainerFile;
+export default ContainerChat;

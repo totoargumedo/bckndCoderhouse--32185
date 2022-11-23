@@ -4,17 +4,12 @@ const productos = new ContainerFile("productos");
 
 async function getProduct({ params }, res) {
   let findElement;
-  let multipleElements;
   if (params.id) {
     findElement = await productos.getById(params.id);
-    multipleElements = false;
   } else {
     findElement = await productos.getAll();
-    multipleElements = true;
   }
-  res
-    .status(200)
-    .render("products", { elements: findElement, multiple: multipleElements });
+  res.status(200).json(findElement);
 }
 
 async function getProductRandom(req, res) {
@@ -24,11 +19,7 @@ async function getProductRandom(req, res) {
 
 async function saveProduct({ body }, res) {
   const savedProduct = await productos.save(body);
-  res
-    .status(201)
-    .redirect(
-      `/?added=true&title=${savedProduct.title}&image=${savedProduct.thumbnail}`
-    );
+  res.status(201).json(savedProduct);
 }
 
 async function deleteProduct({ params }, res) {
@@ -44,6 +35,7 @@ async function modifyProduct({ body, params: { id } }, res) {
 }
 
 export {
+  productos,
   getProduct,
   getProductRandom,
   saveProduct,

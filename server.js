@@ -1,5 +1,6 @@
 import express from "express";
 import { routerProductos } from "./routers/products.js";
+import { routerChat } from "./routers/chat.js";
 import { engine } from "express-handlebars";
 
 // declaracion de server
@@ -19,19 +20,39 @@ app.set("view engine", "handlebars");
 
 // Routers
 app.use("/api/productos", routerProductos);
+app.use("/api/chat", routerChat);
 
 // Endpoints;
 app.get("/", (req, res) => {
-  console.log(req.query.added);
-  res.render("productForm", {
-    productTitle: req.query.title,
-    productImage: req.query.image,
-    added: req.query.added,
+  res.render("productForm");
+});
+
+// socket
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { productos } from "./controllers/products.js";
+import ContainerChat from "./container/containerChat.js";
+
+const messages = new ContainerChat("chat");
+
+const httpServer = new createServer(app);
+const io = new Server(httpServer);
+
+io.on("connection", (socket) => {
+  console.log("User connected to socket");
+
+  socket.emit("productTable", productos.getAll());
+
+  socket.emit("messagesAll", messages.getAll());
+
+  socket.on("newMessage", (data) => {
+    messages.save(data);
+    io.sockets.emit("messagesAll", messages.getAll());
   });
 });
 
 // Inicializacion de server
-const server = app.listen(PORT, () => {
+const server = httpServer.listen(PORT, () => {
   console.log(`Server running in port ${server.address().port}`);
 });
 
